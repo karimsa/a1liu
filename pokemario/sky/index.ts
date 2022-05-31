@@ -5,13 +5,37 @@ import {
   vec2equal,
   vec2mul,
   Vector2,
+  Size,
 } from "../sprite";
 import { Game } from "../game";
 import { SkyBackground } from "./sky";
 import { applyTransition, Transitions } from "../transition";
 import { KeyboardKey } from "../interaction-monitor";
 
-export class Landscape extends RenderableGroup<SkyBackground> {
+class Ground extends Renderable {
+  velocity: Vector2 = { x: 0, y: 0 };
+
+  render(game: Game, ctx: CanvasRenderingContext2D): void {
+    const height = Math.round(0.15 * game.height);
+    ctx.fillStyle = `#8e0909`;
+    ctx.fillRect(0, game.height - height, game.width, height);
+
+    const grassHeight = Math.round(0.01 * game.height);
+    ctx.fillStyle = `green`;
+    ctx.fillRect(
+      0,
+      game.height - height - grassHeight,
+      game.width,
+      grassHeight
+    );
+  }
+
+  tick(delta: number, game: Game): void {}
+}
+
+export class Landscape extends RenderableGroup<
+  Renderable & { velocity: Vector2 }
+> {
   direction: "left" | "right" | null = null;
   currentVelocity: Vector2 = { x: 0, y: 0 };
   walkVelocity: Vector2;
@@ -34,6 +58,7 @@ export class Landscape extends RenderableGroup<SkyBackground> {
           },
           game
         ),
+        new Ground(),
       ])
     );
 
