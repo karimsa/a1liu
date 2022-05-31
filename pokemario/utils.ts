@@ -22,3 +22,23 @@ export function projectSizeByHeight(size: Size, targetHeight: number): Size {
     height: targetHeight,
   };
 }
+
+export function pickOne<T>(list: T[]): T {
+  return list[Math.floor(Math.random() * list.length)]!;
+}
+
+export function randInt(min: number, max: number): number {
+  return Math.round(Math.random() * (max - min)) + min;
+}
+
+export function randFloat(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
+}
+
+export function filterSet<T>(set: Set<T>, keepElm: (elm: T) => boolean) {
+  set.forEach((elm) => {
+    if (!keepElm(elm)) {
+      set.delete(elm);
+    }
+  });
+}

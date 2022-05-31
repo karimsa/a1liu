@@ -26,7 +26,6 @@ export interface Transition<T extends { [key: string]: number }> {
   initial: T;
   target: T;
   transition: TransitionStepFunc;
-  update: (state: T) => void;
 }
 
 type StatefulTransition<T extends { [key: string]: number }> = Transition<T> & {

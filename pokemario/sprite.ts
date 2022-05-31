@@ -17,6 +17,15 @@ export interface Vector2 {
   y: number;
 }
 
+export function getBoundingBox(position: Vector2, size: Size) {
+  return {
+    startX: position.x,
+    startY: position.y,
+    endX: position.x + size.width,
+    endY: position.y + size.height,
+  };
+}
+
 export function vec2equal(left: Vector2, right: Vector2) {
   return left.x === right.x && left.y === right.y;
 }
@@ -45,6 +54,7 @@ export abstract class Renderable {
 }
 
 export abstract class Sprite extends Renderable {
+  opacity = 1;
   velocity: Vector2 = {
     x: 0,
     y: 0,
@@ -97,15 +107,16 @@ export abstract class Sprite extends Renderable {
       x: otherXM - selfXM,
       y: otherYM - selfYM,
     };
+  }
 
-    return {
-      x: otherX1 - selfX1,
-      y: otherY1 - selfY1,
-    };
+  tick(delta: number, game: Game) {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
   }
 
   render(game: Game, ctx: CanvasRenderingContext2D) {
     const image = this.image;
+    ctx.globalAlpha = this.opacity;
     ctx.drawImage(
       image,
       0,
@@ -117,11 +128,12 @@ export abstract class Sprite extends Renderable {
       this.size.width,
       this.size.height
     );
+    ctx.globalAlpha = 1;
   }
 }
 
 export class SpriteGroup extends Renderable {
-  constructor(public sprites: Sprite[]) {
+  constructor(public sprites: Set<Sprite> = new Set<Sprite>()) {
     super();
   }
 
