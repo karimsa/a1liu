@@ -1,32 +1,41 @@
-import { SpriteGroup, vec2equal, vec2mul, Vector2 } from "../sprite";
+import {
+  Renderable,
+  Sprite,
+  RenderableGroup,
+  vec2equal,
+  vec2mul,
+  Vector2,
+} from "../sprite";
 import { Game } from "../game";
 import { SkyBackground } from "./sky";
 import { applyTransition, Transitions } from "../transition";
 import { KeyboardKey } from "../interaction-monitor";
 
-export class Landscape extends SpriteGroup {
+export class Landscape extends RenderableGroup<SkyBackground> {
   direction: "left" | "right" | null = null;
   currentVelocity: Vector2 = { x: 0, y: 0 };
   walkVelocity: Vector2;
   sprintVelocity: Vector2;
 
   constructor(game: Game) {
-    super([
-      new SkyBackground(
-        {
-          x: 0,
-          y: 0,
-        },
-        game
-      ),
-      new SkyBackground(
-        {
-          x: game.width,
-          y: 0,
-        },
-        game
-      ),
-    ]);
+    super(
+      new Set([
+        new SkyBackground(
+          {
+            x: 0,
+            y: 0,
+          },
+          game
+        ),
+        new SkyBackground(
+          {
+            x: game.width,
+            y: 0,
+          },
+          game
+        ),
+      ])
+    );
 
     this.walkVelocity = { x: 0.01 * game.width, y: 0 };
     this.sprintVelocity = vec2mul(3, this.walkVelocity);
@@ -44,7 +53,7 @@ export class Landscape extends SpriteGroup {
         : this.walkVelocity
       : { x: 0, y: 0 };
 
-    const currentVelocity = applyTransition(
+    this.currentVelocity = applyTransition(
       {
         initial: vec2mul(
           this.direction === "left" ? 1 : this.direction === "right" ? -1 : 0,
@@ -58,19 +67,14 @@ export class Landscape extends SpriteGroup {
             : 0,
           velocity
         ),
-        state: this.sprites[0]!.velocity,
+        state: this.currentVelocity,
         transition: Transitions.linear(250),
-        update: (velocity) => {
-          this.sprites.forEach((sprite) => {
-            sprite.velocity = velocity;
-          });
-        },
       },
       delta
     );
     this.direction = currentDirection;
     this.sprites.forEach((sprite) => {
-      sprite.velocity = currentVelocity;
+      sprite.velocity = this.currentVelocity;
     });
 
     super.tick(delta, game);

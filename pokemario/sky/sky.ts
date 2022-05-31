@@ -3,7 +3,7 @@ import {
   Renderable,
   Size,
   Sprite,
-  SpriteGroup,
+  RenderableGroup,
   Vector2,
 } from "../sprite";
 import { Game } from "../game";
@@ -43,7 +43,7 @@ class Cloud extends Sprite {
 export class SkyBackground implements Renderable {
   velocity: Vector2 = { x: 0, y: 0 };
   size: Size = { width: 0, height: 0 };
-  clouds = new SpriteGroup();
+  clouds = new RenderableGroup();
 
   constructor(public position: Position, game: Game) {
     this.size.width = game.width;

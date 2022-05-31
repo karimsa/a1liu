@@ -38,21 +38,23 @@ export function applyTransition<T>(
 ) {
   const t = _t as any as StatefulTransition<Record<string, number>>;
 
-  for (const key of Object.keys(t.target)) {
-    const initialValue = t.initial[key];
-    const currentValue = t.state[key];
-    const targetValue = t.target[key];
+  for (const key in t.target) {
+    if (typeof t.target[key] === "number") {
+      const initialValue = t.initial[key];
+      const currentValue = t.state[key];
+      const targetValue = t.target[key];
 
-    if (
-      initialValue === targetValue ||
-      // if we're increasing, stop when current exceeds target
-      (initialValue < targetValue && currentValue >= targetValue) ||
-      // if we're decreasing, stop when current drops below target
-      (initialValue > targetValue && currentValue <= targetValue)
-    ) {
-      t.state[key] = targetValue;
-    } else {
-      t.transition(key, t, delta);
+      if (
+        initialValue === targetValue ||
+        // if we're increasing, stop when current exceeds target
+        (initialValue < targetValue && currentValue >= targetValue) ||
+        // if we're decreasing, stop when current drops below target
+        (initialValue > targetValue && currentValue <= targetValue)
+      ) {
+        t.state[key] = targetValue;
+      } else {
+        t.transition(key, t, delta);
+      }
     }
   }
   return _t.state;

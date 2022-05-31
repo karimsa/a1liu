@@ -132,8 +132,8 @@ export abstract class Sprite extends Renderable {
   }
 }
 
-export class SpriteGroup extends Renderable {
-  constructor(public sprites: Set<Sprite> = new Set<Sprite>()) {
+export class RenderableGroup<T extends Renderable> extends Renderable {
+  constructor(public sprites: Set<T> = new Set<T>()) {
     super();
   }
 
