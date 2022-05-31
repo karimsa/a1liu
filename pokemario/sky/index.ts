@@ -14,6 +14,7 @@ import { KeyboardKey } from "../interaction-monitor";
 
 class Ground extends Renderable {
   velocity: Vector2 = { x: 0, y: 0 };
+  position: Vector2 = { x: 0, y: 0 };
 
   render(game: Game, ctx: CanvasRenderingContext2D): void {
     const height = Math.round(0.15 * game.height);
@@ -29,11 +30,23 @@ class Ground extends Renderable {
       grassHeight
     );
 
+    this.position.y = game.height - height - grassHeight;
+
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
     ctx.font = "24px monospace";
     ctx.fillStyle = "#fff";
-    ctx.fillText(`score: ${game.score}`, 10, game.height - 10);
+    ctx.fillText(`score: ${game.score}`, 10, game.height - 10 - 24 - 10);
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.font = "24px monospace";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(
+      `time: ${Math.floor(game.timeElapsed / 1e3)}s`,
+      10,
+      game.height - 10
+    );
 
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
@@ -53,6 +66,8 @@ export class Landscape extends RenderableGroup<
   walkVelocity: Vector2;
   sprintVelocity: Vector2;
 
+  readonly ground = new Ground();
+
   constructor(game: Game) {
     super(
       new Set([
@@ -70,10 +85,10 @@ export class Landscape extends RenderableGroup<
           },
           game
         ),
-        new Ground(),
       ])
     );
 
+    this.sprites.add(this.ground);
     this.walkVelocity = { x: 0.01 * game.width, y: 0 };
     this.sprintVelocity = vec2mul(3, this.walkVelocity);
   }
@@ -109,6 +124,15 @@ export class Landscape extends RenderableGroup<
       },
       delta
     );
+
+    if (this.direction !== currentDirection) {
+      if (currentDirection) {
+        game.player.startRunning(currentDirection);
+      } else {
+        game.player.stopRunning();
+      }
+    }
+
     this.direction = currentDirection;
     this.sprites.forEach((sprite) => {
       sprite.velocity = this.currentVelocity;
