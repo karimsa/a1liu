@@ -28,6 +28,18 @@ class Ground extends Renderable {
       game.width,
       grassHeight
     );
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.font = "24px monospace";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(`score: ${game.score}`, 10, game.height - 10);
+
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.font = "24px monospace";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(`lives: ${game.lives}`, game.width - 10, game.height - 10);
   }
 
   tick(delta: number, game: Game): void {}

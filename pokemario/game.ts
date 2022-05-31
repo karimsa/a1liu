@@ -7,6 +7,9 @@ export class Game {
   renderables: Renderable[] = [];
   monitor = new InteractionMonitor();
 
+  // TODO: move this into main player
+  lives = 3;
+
   constructor(public width: number, public height: number) {
     this.renderables.push(new Landscape(this));
   }
